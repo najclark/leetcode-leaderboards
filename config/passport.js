@@ -13,8 +13,8 @@ module.exports = (passport) => {
     async (accessToken, refreshToken, profile, done) => {
         // Callback method triggered upon signing in
         try {
-            let user = await User.find({ googleId: profile.id })[0]
-            
+            let user = await User.findOne({ googleId: profile.id })
+
             if (!user) {
                 user = await User.create({
                         googleId: profile.id,
@@ -36,6 +36,6 @@ module.exports = (passport) => {
     })
     
     passport.deserializeUser((user, done) => {
-        User.find({ googleId: user.id }, (err, user) => done(err, user))
+        User.find({ _id: user }, (err, user) => done(err, user))
     })
 }

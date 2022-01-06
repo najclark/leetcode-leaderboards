@@ -7,11 +7,12 @@ const UserSchema = new Schema({
     firstName: String,
     lastName: String,
     image: String,
+    leetcodeUsername: String,
+    leaderboards: [String],
     createdAt: {
         type: Date,
         default: Date.now
-    },
-    leetcodeUsername: String
+    }
 })
 
 const User = mongoose.model('User', UserSchema)

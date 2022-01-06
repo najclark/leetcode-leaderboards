@@ -21,12 +21,13 @@ app.engine('.hbs', exphbs.engine({extname: '.hbs'}));
 app.set('view engine', '.hbs');
 app.set('views', './views');
 
+// Static folder
+const path = require('path')
+app.use(express.static('public'))
+
 // Middleware
 // const cors = require('cors')
-// const bodyParser = require('body-parser')
-// require('./auth/google')
 // app.use(cors())
-// app.use(bodyParser.json())
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 app.use(session({
@@ -39,21 +40,20 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-
-// Static folder
-const path = require('path')
-app.use(express.static('public'))
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // Routes
 app.use('/', require('./routes/index'))
 app.use('/auth', require('./routes/auth'))
 
 // cookieSession config
-const cookieSession = require('cookie-session')
-app.use(cookieSession({
-    maxAge: 24 * 60 * 60 * 2000, // One day in millis
-    keys: ['qwerty']
-}))
+// const cookieSession = require('cookie-session')
+// app.use(cookieSession({
+//     maxAge: 24 * 60 * 60 * 2000, // One day in millis
+//     keys: ['qwerty']
+// }))
 
 // Connect to DB
 const connectDB = require('./config/db')
