@@ -8,7 +8,10 @@ const UserSchema = new Schema({
     lastName: String,
     image: String,
     leetcodeUsername: String,
-    leaderboards: [String],
+    leaderboards: {
+        type: [String],
+        default: []
+    },
     createdAt: {
         type: Date,
         default: Date.now

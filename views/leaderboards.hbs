@@ -1,7 +1,45 @@
-<h1>Your Leaderboards</h1>
-
-<div class="row">
-    <form  method="get" class="col s12" action="/createleaderboard">
-        <button class="btn waves-effect waves-light" type="submit" name="action">Create a Leaderboard</button>
-    </form>
+<div class="row" style="padding-top: 2%;">
+    {{#if leaderboards}}
+        <div class="row">
+            <div class="col leaderboards-container">
+                {{#each leaderboards}}
+                    <div class="card" style="min-width: 500px;">
+                        <div class="card-content">
+                            <span class="card-title">{{name}}</span>
+                            <div class="divider"></div>
+                            <div class="section">
+                                <ul class="collection">
+                                    {{#each users}}
+                                        <li class="collection-item avatar">
+                                            <img src="{{user.image}}" alt="image" class="circle">
+                                            <span class="title">{{user.displayName}}</span> <br>
+                                            {{user.leetcodeUsername}}
+                                            <a href="#!" class="secondary-content"><i class="fas fa-crown"></i></a>
+                                        </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-action">
+                            <a href="#">This is a link</a>
+                            <a href="#">This is a link</a>
+                        </div>
+                    </div>
+                {{/each}}
+                <div class="card">
+                        <div class="card-content" style="height:100%;">
+                            <span class="card-title">Add a Leaderboard</span>
+                            <div class="divider"></div>
+                            <div class="section" style="padding:0; height:100%; display:flex; justify-content:center; align-items:center;">
+                                 <a href="/leaderboards/add">
+                                    <i class="material-icons large">add</i>
+                                 </a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    {{else}}
+        You don't have any leaderboards, <a href="/leaderboards/add">add</a> one!
+    {{/if}}
 </div>

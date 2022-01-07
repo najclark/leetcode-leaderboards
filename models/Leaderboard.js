@@ -4,24 +4,30 @@ const nanoid = require('nanoid')
 
 const Difficulty = ['Easy', 'Medium', 'Hard']
 
-const Question = {
+const Question = new Schema({
     title: String,
     titleSlug: String,
     questionId: String,
-    difficulty: Difficulty,
+    difficulty: {
+        type: String,
+        enum: Difficulty
+    },
     likes: Number,
     dislikes: Number,
     url: String,
     expirationDate: Date
-}
+})
 
-const SubmissionStatus = {
-    _id: String,
+const SubmissionStatus = new Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     submissionTime: Date,
     submissionRuntime: String,
     submissionMemory: String,
     submissionLang: String
-}
+})
 
 const LeaderboardSchema = new Schema({
     name: String,
@@ -33,13 +39,19 @@ const LeaderboardSchema = new Schema({
         }
     },
     password: String,
-    questionDifficulties: Difficulty,
+    questionDifficulties: [{
+        type: String,
+        enum: Difficulty
+    }],
     questionFrequency: {
         type: String,
         enum: ['Every 12 Hours', 'Daily', 'Weekly']
     },
     users: [{
-        id: String,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
         admin: Boolean
     }],
     submissionStatus: [SubmissionStatus],

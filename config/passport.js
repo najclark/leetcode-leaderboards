@@ -36,6 +36,6 @@ module.exports = (passport) => {
     })
     
     passport.deserializeUser((user, done) => {
-        User.find({ _id: user }, (err, user) => done(err, user))
+        User.findOne({ _id: user }, (err, user) => done(err, user))
     })
 }

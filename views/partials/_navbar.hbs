@@ -1,0 +1,28 @@
+<ul id="dropdown1" class="dropdown-content">
+    <li><a href="/settings">Settings</a></li>
+    <li class="divider"></li>
+    <li><a href="/auth/logout">Logout</a></li>
+</ul>
+<nav class="blue">
+    <div class="nav-wrapper" style="width:70%; margin: 0 auto;">
+        <a href="#!" class="brand-logo">🏆 Leetcode Leaderboards</a>
+        <ul class="right hide-on-med-and-down">
+            <!-- Dropdown Trigger -->
+            <li>
+                <a class="dropdown-trigger" href="#!" data-target="dropdown1">
+                    <div class="valign-wrapper">
+                        <span style="margin-right:10px">{{user.displayName}}</span>
+                        <img src="{{user.image}}" alt="" class="circle right" style="width:30px;height:30px;vertical-align:middle;">
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.dropdown-trigger');
+        var instances = M.Dropdown.init(elems, { alignment: 'down' });
+    });
+</script>

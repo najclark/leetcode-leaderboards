@@ -1,46 +1,103 @@
-<h3>🏆 Create a Leaderboard</h3>
-
-<div class="section">
-    <p class="lead">Fill out the following fields to create a custom leaderboard</p>
+<div class="card-tabs">
+    <ul class="tabs tabs-fixed-width">
+        <li class="tab"><a class="active" href="#join">Join</a></li>
+        <li class="tab"><a href="#create">Create</a></li>
+    </ul>
 </div>
-<div class="row">
-    <form  method="post" class="col s12" action="/createleaderboard/submit">
+<div id="create">
+    <h3>🏆 Create a Leaderboard</h3>
+
+    <div class="section">
+        <p class="lead">Fill out the following fields to create a custom leaderboard</p>
+    </div>
+    <div class="row">
+        <form  method="post" class="col s12" action="/leaderboards/add/create">
+                <div class="input-field col s12">
+                    <input id="icon_prefix" type="text" class="validate" name="name">
+                    <label for="icon_prefix">Leaderboard Name</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="icon_prefix" type="password" class="validate" name="password">
+                    <label for="icon_prefix">Password (optional)</label>
+                </div>
+                <div class="input-field col s12">
+                    <select multiple name="questionDifficulties">
+                        <option value="" disabled>Choose your option</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                    <label>Question Difficulties</label>
+                </div>
+
+                <div class="input-field col s12">
+                    <select name="questionFrequency">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="Every 12 Hours">Every 12 Hours</option>
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                    </select>
+                    <label>Question Frequency</label>
+                </div>
+            <div class="row s12">
+                <a class="waves-effect waves-teal btn-flat" href="/leaderboards">Cancel</a>
+                <button class="btn waves-effect waves-light" type="submit" name="action">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="join">
+    <h3>🏆 Join a Leaderboard</h3>
+
+    <div class="section">
+        <p class="lead">Search for a leaderboard by name to join leaderboard</p>
+    </div>
+    <div class="row">
+        <form  method="post" class="col s12" action="/leaderboards/add/search">
             <div class="input-field col s12">
                 <input id="icon_prefix" type="text" class="validate" name="name">
                 <label for="icon_prefix">Leaderboard Name</label>
             </div>
-            <div class="input-field col s12">
-                <input id="icon_prefix" type="password" class="validate" name="password">
-                <label for="icon_prefix">Password (optional)</label>
+            <div class="row s12">
+                <a class="waves-effect waves-teal btn-flat left" href="/leaderboards">Cancel</a>
+                <button class="btn waves-effect waves-light right" type="submit" name="action">Search</button>
             </div>
-            <div class="input-field col s12">
-                <select multiple name="difficulties">
-                    <option value="" disabled>Choose your option</option>
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
-                </select>
-                <label>Question Difficulties</label>
-            </div>
-
-            <div class="input-field col s12">
-                <select name="frequency">
-                    <option value="" disabled selected>Choose your option</option>
-                    <option value="Every 12 Hours">Every 12 Hours</option>
-                    <option value="Daily">Daily</option>
-                    <option value="Weekly">Weekly</option>
-                </select>
-                <label>Question Frequency</label>
-            </div>
-        <button class="btn waves-effect waves-light red" type="submit" onclick="history.back()">Back</button>
-        <button class="btn waves-effect waves-light" type="submit" name="action">Submit</button>
-    </form>
+        </form>
+        {{#if results}}
+            <ul class="collection">
+                {{#each results}}
+                    <li class="collection-item" style="overflow: hidden;"><div>
+                        <p class="left">
+                            {{name}} (Admin: 
+                            {{#each users}}
+                                {{user.displayName}}, 
+                            {{/each}})
+                        </p>
+                        {{#if alreadyJoined}}
+                            <a class="btn-flat disabled right">Already Joined</a>
+                        {{else}}
+                            <form  method="post" action="/leaderboards/add/join">
+                                <input type="hidden" name="_id" value="{{_id}}">
+                                <button class="btn-flat waves-effect waves-light right" type="submit" name="action">Join</button>
+                            </form>
+                        {{/if}}
+                        </div>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            No results found
+        {{/if}}
+    </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('select');
         var instances = M.FormSelect.init(elems, null);
-        console.log("here")
     });
+
+  $(document).ready(function(){
+    $('.tabs').tabs();
+  });
 </script>

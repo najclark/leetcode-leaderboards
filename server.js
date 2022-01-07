@@ -17,7 +17,15 @@ if (process.env.NODE_ENV === 'development') {
 
 // Handlebars
 const exphbs = require('express-handlebars')
-app.engine('.hbs', exphbs.engine({extname: '.hbs'}));
+app.engine(
+    '.hbs', 
+    exphbs.engine({
+        extname: '.hbs',
+        runtimeOptions: {
+            allowProtoPropertiesByDefault: true
+        }
+    })
+)
 app.set('view engine', '.hbs');
 app.set('views', './views');
 
@@ -47,6 +55,7 @@ app.use(bodyParser.json())
 // Routes
 app.use('/', require('./routes/index'))
 app.use('/auth', require('./routes/auth'))
+app.use('/leaderboards', require('./routes/leaderboards'))
 
 // cookieSession config
 // const cookieSession = require('cookie-session')

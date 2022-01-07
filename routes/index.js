@@ -15,17 +15,17 @@ router.get('/', ensureGuest, (req, res) => {
 
 // @desc    Leaderboards page
 // @route   GET /leaderboards
-router.get('/leaderboards', ensureAuth, hasLeetcodeUsername, (req, res) => {
-    const leaderboards = req.user.leaderboards
+// router.get('/leaderboards', ensureAuth, hasLeetcodeUsername, (req, res) => {
+//     const leaderboards = req.user.leaderboards
 
-    Leaderboard.find({
-        '_id': { $in: leaderboards}
-    }, (err, docs) => {
-         console.log(docs);
-    });
+//     Leaderboard.find({
+//         '_id': { $in: leaderboards}
+//     }, (err, docs) => {
+//          console.log(docs);
+//     });
 
-    res.render('leaderboards')
-})
+//     res.render('leaderboards')
+// })
 
 
 // @desc    Form asking for leetcode username
@@ -46,26 +46,27 @@ router.post('/leetcodeform/submit', ensureAuth, (req, res) => {
 
 // @desc    Form asking creating a leaderboard
 // @route   GET /createleaderboard
-router.get('/createleaderboard', ensureAuth, (req, res) => {
-    res.render('leaderboardform', {
-        layout: 'login'
-    })
-})
+// router.get('/createleaderboard', ensureAuth, (req, res) => {
+//     res.render('leaderboardform', {
+//         layout: 'login'
+//     })
+// })
 
 // @desc    Form asking creating a leaderboard submitted
 // @route   POST /createleaderboard/submit
-router.post('/createleaderboard/submit', ensureAuth, (req, res) => {
-    Leaderboard.create({
-        name: req.body.name,
-        password: req.body.password,
-        questionDifficulties: req.body.difficulties,
-        questionFrequency: req.body.frequency,
-        users: [{
-            id: req.user._id,
-            admin: true
-        }]
-    })
-    res.redirect('/leaderboards')
-})
+// router.post('/createleaderboard/submit', ensureAuth, (req, res) => {
+//     Leaderboard.create({
+//         name: req.body.name,
+//         password: req.body.password,
+//         questionDifficulties: req.body.difficulties,
+//         questionFrequency: req.body.frequency,
+//         users: [{
+//             id: req.user._id,
+//             admin: true
+//         }]
+//     })
+//     // TODO: add leaderboard id to user's leaderboard list
+//     res.redirect('/leaderboards')
+// })
 
 module.exports = router
