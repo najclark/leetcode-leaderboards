@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const { ensureAuth, ensureGuest } = require('../middleware/auth')
-const { hasLeetcodeUsername, hasNoLeetcodeUsername } = require('../middleware/leetcode')
+const { ensureAuth } = require('../middleware/auth')
+const { hasLeetcodeUsername } = require('../middleware/leetcode')
 const User = require('../models/User')
 const Leaderboard = require('../models/Leaderboard')
+const { nextContest } = require('../logic/question')
 
 // @desc    leaderboards page
 // @route   GET /leaderboards
@@ -11,7 +12,7 @@ router.get('/', ensureAuth, hasLeetcodeUsername, async (req, res) => {
     const userLeaderboards = req.user.leaderboards
 
     try {
-        const leaderboards = await Leaderboard.find({
+        let leaderboards = await Leaderboard.find({
             '_id': { $in: userLeaderboards }
         }).populate({ 
             path: 'users',
@@ -20,6 +21,13 @@ router.get('/', ensureAuth, hasLeetcodeUsername, async (req, res) => {
               model: 'User'
             } 
         }).lean()
+
+        leaderboards = leaderboards.map((leaderboard) => {
+            leaderboard.findQuestion = () => {
+                console.log(`Find a question for leaderboard ${leaderboard.name}`)
+            }
+            return leaderboard
+        })
 
         res.render('leaderboards', {
             leaderboards,
@@ -73,9 +81,6 @@ router.post('/add/search', ensureAuth, async (req, res) => {
             let alreadyJoined = false
             const users = leaderboard.users
             const admins = users.filter((userDetails) => {
-                console.log(userDetails.user.id)
-                console.log(req.user.id)
-                console.log(userDetails.user.id === req.user.id)
                 if (userDetails.user.id === req.user.id) {
                     alreadyJoined = true
                 }
@@ -111,6 +116,49 @@ router.post('/add/join', ensureAuth, async (req, res) => {
     
         const user = await User.findById(req.user._id)
         user.leaderboards.push(leaderboard._id)
+        user.save()
+    
+        res.redirect('/leaderboards')
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+// @desc    Force finding a question for a leaderboard
+// @route   POST /leaderboards/add/join
+router.post('/findquestion', ensureAuth, async (req, res) => {
+    try {
+        const leaderboard = await Leaderboard.findById(req.body._id)
+        await nextContest(leaderboard, null)
+    
+        res.redirect('/leaderboards')
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+// @desc    Leave a leaderboard
+// @route   POST /leaderboards/leave
+router.post('/leave', ensureAuth, async (req, res) => {
+    try {
+        const leaderboard = await Leaderboard.findById(req.body._id)
+        
+        leaderboard.users = leaderboard.users.filter((userDetails) => {
+            return userDetails.user != req.user.id
+        })
+
+        if (leaderboard.users.length === 0) {
+            leaderboard.delete()
+        } else {
+            leaderboard.save()
+        }
+
+        const user = await User.findById(req.user._id)
+        user.leaderboards = user.leaderboards.filter((L) => {
+            return L != leaderboard.id
+        })
         user.save()
     
         res.redirect('/leaderboards')

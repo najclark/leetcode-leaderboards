@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/najclark/leetcode-leaderboards#readme",
   "dependencies": {
+    "axios": "^0.24.0",
     "body-parser": "^1.19.1",
     "connect-mongo": "^4.6.0",
     "cookie-session": "^2.0.0",

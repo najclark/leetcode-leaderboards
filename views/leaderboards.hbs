@@ -5,24 +5,52 @@
                 {{#each leaderboards}}
                     <div class="card" style="min-width: 500px;">
                         <div class="card-content">
-                            <span class="card-title">{{name}}</span>
+                            <span class="card-title leaderboard-title">{{name}}
+                                <span class="right" style="margin: 0;">
+                                    {{#if currentQuestion}}
+                                        {{#ifEquals currentQuestion.question.difficulty "Easy"}}
+                                            <a class="btn-flat waves-effect waves-light tooltipped right green-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Solve on leetcode!" style="text-decoration: underline; padding: 0;">{{currentQuestion.question.title}}</a>
+                                        {{/ifEquals}}
+                                        {{#ifEquals currentQuestion.question.difficulty "Medium"}}
+                                            <a class="btn-flat waves-effect waves-light tooltipped right orange-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Solve on leetcode!" style="text-decoration: underline; padding: 0;">{{currentQuestion.question.title}}</a>
+                                        {{/ifEquals}}
+                                        {{#ifEquals currentQuestion.question.difficulty "Hard"}}
+                                            <a class="btn-flat waves-effect waves-light tooltipped right red-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Solve on leetcode!" style="text-decoration: underline; padding: 0;">{{currentQuestion.question.title}}</a>
+                                        {{/ifEquals}}
+                                        <br>
+                                        <p class="small-text grey-text right">Expires {{timeTill currentQuestion.expiration}}</p>
+                                    {{else}}
+                                        <form method="post" action="/leaderboards/findquestion">
+                                            <input type="hidden" name="_id" value="{{_id}}">
+                                            <button class="btn-flat waves-effect waves-light tooltipped grey-text" type="submit" name="action" data-position="bottom" data-tooltip="Find one now" style="text-decoration: underline;">
+                                                No Question Currently
+                                            </button>
+                                        </form>
+                                    {{/if}}
+                                </span>
+                            </span>
                             <div class="divider"></div>
                             <div class="section">
                                 <ul class="collection">
                                     {{#each users}}
                                         <li class="collection-item avatar">
                                             <img src="{{user.image}}" alt="image" class="circle">
-                                            <span class="title">{{user.displayName}}</span> <br>
-                                            {{user.leetcodeUsername}}
+                                            <span class="title">{{user.displayName}} ({{user.leetcodeUsername}})</span> <br>
+                                            <p class="small-text grey-text">{{points}} points</p>
                                             <a href="#!" class="secondary-content"><i class="fas fa-crown"></i></a>
                                         </li>
                                     {{/each}}
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-action">
-                            <a href="#">This is a link</a>
-                            <a href="#">This is a link</a>
+                        <div class="card-action leaderboard-title">
+                            <a href="#">Question History</a>
+                            <form  method="post" action="/leaderboards/leave">
+                                <input type="hidden" name="_id" value="{{_id}}">
+                                <button class="btn-flat waves-effect waves-light tooltipped right orange-text" type="submit" name="action" data-position="bottom" data-tooltip="Leave leaderboard">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 {{/each}}
@@ -43,3 +71,11 @@
         You don't have any leaderboards, <a href="/leaderboards/add">add</a> one!
     {{/if}}
 </div>
+
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.tooltipped');
+        var instances = M.Tooltip.init(elems, null);
+    });
+</script>

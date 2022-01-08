@@ -19,3 +19,15 @@ p {
     align-items: stretch;
     align-content: space-around;
 }
+
+.leaderboard-title {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    align-content: space-around;
+}
+
+.small-text {
+    font-size: small;
+    margin: 0 !important;
+}

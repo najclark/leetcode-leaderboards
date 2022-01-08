@@ -17,12 +17,21 @@ if (process.env.NODE_ENV === 'development') {
 
 // Handlebars
 const exphbs = require('express-handlebars')
+const moment = require('moment')
 app.engine(
     '.hbs', 
     exphbs.engine({
         extname: '.hbs',
         runtimeOptions: {
             allowProtoPropertiesByDefault: true
+        },
+        helpers: {
+            ifEquals: function (arg1, arg2, options) {
+                return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+            },
+            timeTill: function (time) {
+                return moment(time).fromNow()
+            }
         }
     })
 )
@@ -57,17 +66,14 @@ app.use('/', require('./routes/index'))
 app.use('/auth', require('./routes/auth'))
 app.use('/leaderboards', require('./routes/leaderboards'))
 
-// cookieSession config
-// const cookieSession = require('cookie-session')
-// app.use(cookieSession({
-//     maxAge: 24 * 60 * 60 * 2000, // One day in millis
-//     keys: ['qwerty']
-// }))
-
 // Connect to DB
 const connectDB = require('./config/db')
-connectDB()
-
+connectDB().then(() => {
+    // Start all leaderboards when db is ready
+    const { initContests } = require('./logic/startup')
+    initContests()
+    console.log("All contests started 🚀")
+})
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`))

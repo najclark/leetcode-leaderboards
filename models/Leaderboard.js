@@ -14,8 +14,7 @@ const Question = new Schema({
     },
     likes: Number,
     dislikes: Number,
-    url: String,
-    expirationDate: Date
+    url: String
 })
 
 const SubmissionStatus = new Schema({
@@ -52,12 +51,20 @@ const LeaderboardSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        admin: Boolean
+        admin: Boolean,
+        points: {
+            type: Number,
+            default: 0
+        }
     }],
     submissionStatus: [SubmissionStatus],
-    currentQuestion: Question,
+    currentQuestion: {
+        question: Question,
+        expiration: Date
+    },
     questionHistory: [{
         question: Question,
+        expiration: Date,
         submissionStatus: [SubmissionStatus]
     }],
     createdAt: {
