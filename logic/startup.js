@@ -1,15 +1,19 @@
 const Leaderboard = require("../models/Leaderboard")
-const { nextContest } = require('./question')
+const { resumeContest } = require('./contest')
 
-const initContests = () => {
+const initContests = async () => {
     try {
-        Leaderboard.find({} , (err, leaderboards) => {
-            if (err) console.log(err)
-            
-            leaderboards.forEach((leaderboard) => {
-                // Start a new contest for every leaderboard on startup
-                nextContest(leaderboard, null, false)
-            })
+        const leaderboards = await Leaderboard.find({}).populate({ 
+            path: 'users',
+            populate: {
+              path: 'user',
+              model: 'User'
+            } 
+        })
+        
+        leaderboards.forEach((leaderboard) => {
+            // Start a new contest for every leaderboard on startup
+            resumeContest(leaderboard, null, false)
         })
     } catch (err) {
         console.error(err)

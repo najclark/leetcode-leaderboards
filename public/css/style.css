@@ -1,9 +1,13 @@
+.container {
+    width: 80% !important;
+}
+
 p {
     margin: 10px 0 !important;
 }
 
 .login-container {
-    width: 30%;
+    width: 30% !important;
     margin-top: 50px;
     text-align: center;
 }
@@ -30,4 +34,33 @@ p {
 .small-text {
     font-size: small;
     margin: 0 !important;
+}
+
+.image-name {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.fixed-height {
+    height: 30px !important;
+}
+
+.fill-height {
+    height: calc(100% - 30px  - 32px - 5px);;
+}
+
+.center-vertically {
+    display: flex;
+    align-items: center;
+}
+
+.incognito-btn {
+    padding-right: 2px;
+    padding-left: 2px;
+    margin: 0;
+}
+
+.incognito-btn:hover {
+    background-color: transparent !important;
 }

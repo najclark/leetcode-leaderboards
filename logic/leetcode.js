@@ -51,7 +51,35 @@ const currentTimestamp = async () => {
     return data
 }
 
+const recentUserSubmissions = async (leetcodeUsername) => {
+    const data = await axios.post('https://leetcode.com/graphql', {
+            query: 
+            `query recentUserSubmissionList($username: String!) {
+                recentSubmissionList(username: $username, limit: 1000) {
+                    title
+                    titleSlug
+                    timestamp
+                    statusDisplay
+                    lang
+                    runtime
+                    memory
+                }
+            }`,
+            variables: {
+                username: leetcodeUsername
+            }
+        }, 
+        {
+        headers: {
+            'Content-Type': 'application/json'
+          }
+    })
+    
+    return data.data.data.recentSubmissionList
+}
+
 module.exports = {
     randomQuestion,
-    currentTimestamp
+    currentTimestamp,
+    recentUserSubmissions
 }

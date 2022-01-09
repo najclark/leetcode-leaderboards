@@ -1,11 +1,45 @@
 const Leaderboard = require("../models/Leaderboard")
-const { recentSubmissions } = require('./leetcode')
+const { recentUserSubmissions } = require('./leetcode')
+const moment = require('moment')
 
-const updateSubmissions = (leaderboard) => {
+const updateSubmissions = async (leaderboard) => {
     try {
-        // TODO: implement updating the submission
-        // leaderboard.save()
+        // Update the users submissions statuses
+        await Promise.all(leaderboard.users.map(async (userData) => {
+            // Get a users recent submissions
+            const recentSubmissions = await recentUserSubmissions(userData.user.leetcodeUsername)
+            if (!recentSubmissions) return userData
 
+            // Search through user's recent submission to look for most recent submission relating
+            // to the current question
+            recentSubmissions.every((recentSubmission) => {
+                if (recentSubmission.titleSlug == leaderboard.currentQuestion.question.titleSlug) {
+                    // Create user submission object if not created
+                    if (!userData.submission) {
+                        userData.submission = {}
+                    }
+                    userData.submission.status = recentSubmission.statusDisplay
+                    // Update submission specifics if the submission was accepted
+                    if (recentSubmission.statusDisplay == 'Accepted') {
+                        userData.submission.runtime = recentSubmission.runtime
+                        userData.submission.memory = recentSubmission.memory
+                        userData.submission.lang = recentSubmission.lang
+                        userData.submission.time = moment(recentSubmission.timestamp).toDate()
+                        // userData.user.points += 10
+                        // TODO: handle adding points bc it is not trivial avoid readding points already allotted,
+                        //       maybe update points when contest is over to simplify things
+                    }
+
+                    return false // return false to prevent iterating further through recentSubmissions
+                }
+                return true // return true to continue iterating through recentSubmissions
+            })
+            
+            return userData
+        }))
+        
+        leaderboard.submissionStatusLastUpdated = moment().toDate()
+        leaderboard.save()
     } catch (err) {
         console.error(err)
     }

@@ -18,14 +18,11 @@ const Question = new Schema({
 })
 
 const SubmissionStatus = new Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    submissionTime: Date,
-    submissionRuntime: String,
-    submissionMemory: String,
-    submissionLang: String
+    time: Date,
+    runtime: String,
+    memory: String,
+    lang: String,
+    status: String
 })
 
 const LeaderboardSchema = new Schema({
@@ -55,9 +52,10 @@ const LeaderboardSchema = new Schema({
         points: {
             type: Number,
             default: 0
-        }
+        },
+        submission: SubmissionStatus
     }],
-    submissionStatus: [SubmissionStatus],
+    submissionStatusLastUpdated: Date,
     currentQuestion: {
         question: Question,
         expiration: Date
@@ -65,7 +63,18 @@ const LeaderboardSchema = new Schema({
     questionHistory: [{
         question: Question,
         expiration: Date,
-        submissionStatus: [SubmissionStatus]
+        usersSnapshot: [{
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            admin: Boolean,
+            points: {
+                type: Number,
+                default: 0
+            },
+            submission: SubmissionStatus
+        }]
     }],
     createdAt: {
         type: Date,

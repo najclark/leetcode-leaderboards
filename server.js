@@ -31,6 +31,15 @@ app.engine(
             },
             timeTill: function (time) {
                 return moment(time).fromNow()
+            },
+            trim: function(text, cutoff) {
+                if (text.length > cutoff) {
+                    return text.substring(0, cutoff).concat('...')
+                }
+                return text
+            },
+            willTrim: function(text, cutoff) {
+                return text.length > cutoff
             }
         }
     })
@@ -68,10 +77,10 @@ app.use('/leaderboards', require('./routes/leaderboards'))
 
 // Connect to DB
 const connectDB = require('./config/db')
-connectDB().then(() => {
+connectDB().then(async () => {
     // Start all leaderboards when db is ready
     const { initContests } = require('./logic/startup')
-    initContests()
+    await initContests()
     console.log("All contests started 🚀")
 })
 

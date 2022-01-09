@@ -1,29 +1,5 @@
 const moment = require('moment')
-const Leaderboard = require("../models/Leaderboard")
 const { randomQuestion } = require('./leetcode')
-const { updateSubmissions } = require('./submissions')
-
-const nextContest = async (leaderboard, updateInterval, saveCurrentQuestion = true) => {
-    // Cancle the existing submissions update interval
-    if (updateInterval) {
-        clearInterval(updateInterval)
-    }
-
-    updateSubmissions(leaderboard)
-    const expiration = await nextQuestion(leaderboard, saveCurrentQuestion)
-
-    if (expiration) {
-        // Setup update submissions interval
-        updateInterval = setInterval(() => {
-            updateSubmissions(leaderboard)
-        }, 1000 * 60 * 5) // 5 minutes
-
-        // Setup end current question timeout
-        setTimeout(() => {
-            nextContest(leaderboard, updateInterval)
-        }, Math.abs(moment().diff(expiration)))
-    }
-}
 
 const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
     try {
@@ -32,13 +8,17 @@ const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
             leaderboard.questionHistory.push({
                 question: leaderboard.currentQuestion.question,
                 expiration: leaderboard.currentQuestion.expiration,
-                submissionStatus: leaderboard.submissionStatus
+                usersSnapshot: leaderboard.users
             })
         }
 
         // Reset current question
         leaderboard.currentQuestion = null
-        leaderboard.submissionStatus = []
+        leaderboard.users.map((userData) => {
+            userData.submission = {
+                status: 'No Submission'
+            }
+        })
 
         // Find new question
         let oldQuestions = leaderboard.questionHistory || []
@@ -90,6 +70,5 @@ const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
 }
 
 module.exports = {
-    nextQuestion,
-    nextContest
+    nextQuestion
 }

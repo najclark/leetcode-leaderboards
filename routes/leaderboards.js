@@ -4,7 +4,8 @@ const { ensureAuth } = require('../middleware/auth')
 const { hasLeetcodeUsername } = require('../middleware/leetcode')
 const User = require('../models/User')
 const Leaderboard = require('../models/Leaderboard')
-const { nextContest } = require('../logic/question')
+const { nextContest } = require('../logic/contest')
+const { updateSubmissions } = require('../logic/submissions')
 
 // @desc    leaderboards page
 // @route   GET /leaderboards
@@ -54,11 +55,20 @@ router.post('/add/create', ensureAuth, async (req, res) => {
         user: req.user._id,
         admin: true
     }]
-    const leaderboard = await Leaderboard.create(req.body)
+    let leaderboard = await Leaderboard.create(req.body)
 
     const user = await User.findById(req.user._id)
     user.leaderboards.push(leaderboard._id)
     user.save()
+
+    leaderboard = await Leaderboard.findById(leaderboard._id).populate({ 
+        path: 'users',
+        populate: {
+          path: 'user',
+          model: 'User'
+        } 
+    })
+    await nextContest(leaderboard, null, false)
 
     res.redirect('/leaderboards')
 })
@@ -91,7 +101,6 @@ router.post('/add/search', ensureAuth, async (req, res) => {
             return leaderboard
         })
 
-        console.log(results)
         res.render('leaderboardform', {
             layout: 'login',
             results,
@@ -106,11 +115,15 @@ router.post('/add/search', ensureAuth, async (req, res) => {
 // @desc    Joining an existing leaderboard
 // @route   POST /leaderboards/add/join
 router.post('/add/join', ensureAuth, async (req, res) => {
+    // TODO: add password protection logic
     try {
         const leaderboard = await Leaderboard.findById(req.body._id)
         leaderboard.users.push({
             user: req.user._id,
-            admin: false
+            admin: false,
+            submission: {
+                status: 'No Submission'
+            }
         })
         leaderboard.save()
     
@@ -128,8 +141,15 @@ router.post('/add/join', ensureAuth, async (req, res) => {
 // @desc    Force finding a question for a leaderboard
 // @route   POST /leaderboards/add/join
 router.post('/findquestion', ensureAuth, async (req, res) => {
+    // TODO: phase this out, replace by finding a question on leaderboard creation
     try {
-        const leaderboard = await Leaderboard.findById(req.body._id)
+        const leaderboard = await Leaderboard.findById(req.body._id).populate({ 
+            path: 'users',
+            populate: {
+              path: 'user',
+              model: 'User'
+            } 
+        })
         await nextContest(leaderboard, null)
     
         res.redirect('/leaderboards')
@@ -166,6 +186,32 @@ router.post('/leave', ensureAuth, async (req, res) => {
         console.log(err)
         res.sendStatus(500)
     }
+})
+
+// @desc    Refresh a leaderboard's submissions
+// @route   POST /leaderboards/refreshSubmissions
+router.post('/refreshSubmissions', ensureAuth, async (req, res) => {
+    try {
+        const leaderboard = await Leaderboard.findById(req.body._id).populate({ 
+            path: 'users',
+            populate: {
+              path: 'user',
+              model: 'User'
+            } 
+        })
+        await updateSubmissions(leaderboard)
+    
+        res.redirect('/leaderboards')
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+// @desc    Question history
+// @route   GET /leaderboards/:shortId
+router.get('/:shortId', ensureAuth, async (req, res) => {
+    // TODO: question history
 })
 
 module.exports = router
