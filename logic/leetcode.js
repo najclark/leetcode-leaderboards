@@ -19,6 +19,7 @@ const randomQuestion = async (difficulty) => {
                         name
                     }
                     stats
+                    content
                 }
             }`,
             variables: {

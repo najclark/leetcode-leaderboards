@@ -24,7 +24,7 @@ const updateSubmissions = async (leaderboard) => {
                         userData.submission.runtime = recentSubmission.runtime
                         userData.submission.memory = recentSubmission.memory
                         userData.submission.lang = recentSubmission.lang
-                        userData.submission.time = moment(recentSubmission.timestamp).toDate()
+                        userData.submission.time = moment().toDate()
                         // userData.user.points += 10
                         // TODO: handle adding points bc it is not trivial avoid readding points already allotted,
                         //       maybe update points when contest is over to simplify things

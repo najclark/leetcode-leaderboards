@@ -1,6 +1,6 @@
 const moment = require('moment')
-const { randomQuestion } = require('./leetcode')
 const { updateSubmissions } = require('./submissions')
+const { nextQuestion } = require('./question')
 
 // @Pre leaderboard must have users populated
 const resumeContest = async (leaderboard, updateInterval, saveCurrentQuestion = true) => {
@@ -33,7 +33,7 @@ const nextContest = async (leaderboard, updateInterval, saveCurrentQuestion = tr
         clearInterval(updateInterval)
     }
 
-    if (leaderboard.currentQuestion) {
+    if (leaderboard.currentQuestion.question) {
         await updateSubmissions(leaderboard)
     }
     

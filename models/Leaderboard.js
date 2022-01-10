@@ -14,7 +14,11 @@ const Question = new Schema({
     },
     likes: Number,
     dislikes: Number,
-    url: String
+    url: String,
+    topicTags: [{
+        name: String
+    }],
+    content: String
 })
 
 const SubmissionStatus = new Schema({

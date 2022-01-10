@@ -64,3 +64,8 @@ p {
 .incognito-btn:hover {
     background-color: transparent !important;
 }
+
+.space-between {
+    display: flex;
+    justify-content: space-between;
+}

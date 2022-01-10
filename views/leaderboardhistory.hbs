@@ -1,0 +1,112 @@
+<div class="row" style="padding-top: 2%;">
+    <div class="row">
+        <ul class="collapsible">
+            {{#if leaderboard.currentQuestion.question}}
+                <li>
+                    <div class="collapsible-header center-vertically space-between" style="width: 100%;">
+                        <div class="center-vertically">
+                            <i class="material-icons">expand_more</i>
+                            {{#ifEquals leaderboard.currentQuestion.question.difficulty "Easy"}}     
+                                <a class="btn-flat waves-effect waves-light green-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
+                                    {{leaderboard.currentQuestion.question.title}}
+                                </a> 
+                            {{/ifEquals}}
+                            {{#ifEquals leaderboard.currentQuestion.question.difficulty "Medium"}}
+                                <a class="btn-flat waves-effect waves-light orange-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
+                                    {{leaderboard.currentQuestion.question.title}}
+                                </a> 
+                            {{/ifEquals}}
+                            {{#ifEquals leaderboard.currentQuestion.question.difficulty "Hard"}}
+                                <a class="btn-flat waves-effect waves-light red-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
+                                    {{leaderboard.currentQuestion.question.title}}
+                                </a> 
+                            {{/ifEquals}}
+                        </div>
+                        <p class="grey-text right" style="margin-left: auto;">Expires {{timeTill leaderboard.currentQuestion.expiration}}</p>
+                    </div>
+                    <div class="collapsible-body">
+                        <span>
+                            {{{leaderboard.currentQuestion.question.content}}}
+                        </span>
+                    </div>
+                </li>
+            {{/if}}
+            {{#each leaderboard.questionHistory}}
+                <li>
+                    <div class="collapsible-header center-vertically space-between" style="width: 100%;">
+                        <div class="center-vertically">
+                            <i class="material-icons">expand_more</i>
+                            {{#ifEquals question.difficulty "Easy"}}     
+                                <a class="btn-flat waves-effect waves-light green-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
+                                    {{question.title}}
+                                </a> 
+                            {{/ifEquals}}
+                            {{#ifEquals question.difficulty "Medium"}}     
+                                <a class="btn-flat waves-effect waves-light orange-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
+                                    {{question.title}}
+                                </a> 
+                            {{/ifEquals}}
+                            {{#ifEquals question.difficulty "Hard"}}     
+                                <a class="btn-flat waves-effect waves-light red-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
+                                    {{question.title}}
+                                </a> 
+                            {{/ifEquals}}
+                        </div>
+                        <p class="grey-text right" style="margin-left: auto;">Expired {{timeTill expiration}}</p>
+                    </div>
+                    <div class="collapsible-body">
+                        <span>
+                            {{{question.content}}}
+                        </span>
+                        <div class="divider"></div>
+                        <div class="section" style="max-height:500px; overflow-y:auto;">
+                            <table class="responsive-table striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Runtime</th>
+                                        <th>Memory</th>
+                                        <th>Lang</th>
+                                        <th>
+                                            <div class="center-vertically">
+                                                Status
+                                                <i class="material-icons tiny tooltipped" style="padding-left: 5px;" data-position="top" data-tooltip="If you've already completed a problem, resubmit it on leetcode to receive credit.">info_outline</i>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each usersSnapshot}}
+                                        <tr>
+                                            <td>
+                                                <div class="image-name">
+                                                    <img src="{{user.image}}" alt="image" class="circle" style="width:35px;">
+                                                    <div style="margin-left:5px;">
+                                                        {{user.displayName}}
+                                                        <p class="small-text grey-text">{{points}} points</p>  
+                                                    </div>
+                                                </div>                                   
+                                            </td>
+                                            <td>{{submission.runtime}}</td>
+                                            <td>{{submission.memory}}</td>
+                                            <td>{{submission.lang}}</td>
+                                            <td>{{submission.status}}</td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </li>
+            {{/each}}
+        </ul>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(elems, null);
+    });
+</script>

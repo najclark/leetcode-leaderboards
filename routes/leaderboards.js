@@ -212,6 +212,26 @@ router.post('/refreshSubmissions', ensureAuth, async (req, res) => {
 // @route   GET /leaderboards/:shortId
 router.get('/:shortId', ensureAuth, async (req, res) => {
     // TODO: question history
+    const leaderboard = await Leaderboard.findOne({ 
+        shortId: req.params.shortId 
+    }).populate({ 
+        path: 'users',
+        populate: {
+          path: 'user',
+          model: 'User'
+        } 
+    }).populate({ 
+        path: 'questionHistory.usersSnapshot.user',
+        model: 'User'
+    })
+    
+    // Reverse questionHistory to have most recent question first
+    leaderboard.questionHistory.reverse()
+
+    res.render('leaderboardhistory', {
+        leaderboard,
+        user: req.user
+    })
 })
 
 module.exports = router

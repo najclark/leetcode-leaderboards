@@ -1,0 +1,89 @@
+<div class="card" style="min-width: 600px;">
+    <div class="card-content fill-height">
+        <span class="card-title leaderboard-title">
+            {{#if (willTrim name 20)}}
+                <p class="tooltipped" data-position="top" data-tooltip="{{name}}">{{trim name 20}}</p>
+            {{else}}
+                <p>{{name}}</p>
+            {{/if}}
+            <span class="right" style="margin: 0;">
+                {{#if currentQuestion}}
+                    {{#ifEquals currentQuestion.question.difficulty "Easy"}}
+                        <a class="btn-flat waves-effect waves-light tooltipped right green-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
+                    {{/ifEquals}}
+                    {{#ifEquals currentQuestion.question.difficulty "Medium"}}
+                        <a class="btn-flat waves-effect waves-light tooltipped right orange-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
+                    {{/ifEquals}}
+                    {{#ifEquals currentQuestion.question.difficulty "Hard"}}
+                        <a class="btn-flat waves-effect waves-light tooltipped right red-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
+                    {{/ifEquals}}
+                    <br>
+                    <p class="small-text grey-text right">Expires {{timeTill currentQuestion.expiration}}</p>
+                {{else}}
+                    <form method="post" action="/leaderboards/findquestion">
+                        <input type="hidden" name="_id" value="{{_id}}">
+                        <button class="btn-flat waves-effect waves-light tooltipped grey-text" type="submit" name="action" data-position="bottom" data-tooltip="Find one now" style="text-decoration: underline;">
+                            No Question Currently
+                        </button>
+                    </form>
+                {{/if}}
+            </span>
+        </span>
+        <div class="divider"></div>
+        <div class="section" style="max-height:500px; overflow-y:auto;">
+            <table class="responsive-table striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Runtime</th>
+                        <th>Memory</th>
+                        <th>Lang</th>
+                        <th>
+                            <div class="center-vertically">
+                                Status
+                                <i class="material-icons tiny tooltipped" style="padding-left: 5px;" data-position="top" data-tooltip="If you've already completed a problem, resubmit it on leetcode to receive credit.">info_outline</i>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                        <tr>
+                            <td>
+                                <div class="image-name">
+                                    <img src="{{user.image}}" alt="image" class="circle" style="width:35px;">
+                                    <div style="margin-left:5px;">
+                                        {{user.displayName}}
+                                        <p class="small-text grey-text">{{points}} points</p>  
+                                    </div>
+                                </div>                                   
+                            </td>
+                            <td>{{submission.runtime}}</td>
+                            <td>{{submission.memory}}</td>
+                            <td>{{submission.lang}}</td>
+                            <td>{{submission.status}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <div class="center-vertically right">
+                <form  method="post" action="/leaderboards/refreshSubmissions">
+                    <input type="hidden" name="_id" value="{{_id}}">
+                    <button class="btn-flat btn-small incognito-btn tooltipped right grey-text" type="submit" name="action" data-position="bottom" data-tooltip="Update now">
+                            <i class="material-icons tiny grey-text">refresh</i>
+                    </button>
+                </form>
+                <p class="small-text grey-text right">Updated {{timeTill submissionStatusLastUpdated}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-action leaderboard-title">
+        <a href="/leaderboards/{{shortId}}">Question History</a>
+        <form  method="post" action="/leaderboards/leave">
+            <input type="hidden" name="_id" value="{{_id}}">
+            <button class="btn-flat waves-effect waves-light tooltipped right orange-text" type="submit" name="action" data-position="bottom" data-tooltip="Leave leaderboard">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </form>
+    </div>
+</div>
