@@ -66,21 +66,33 @@
         {{#if results}}
             <ul class="collection">
                 {{#each results}}
-                    <li class="collection-item" style="overflow: hidden;"><div>
-                        <p class="left">
-                            {{name}} (Admin: 
-                            {{#each users}}
-                                {{user.displayName}}, 
-                            {{/each}})
-                        </p>
-                        {{#if alreadyJoined}}
-                            <a class="btn-flat disabled right">Already Joined</a>
-                        {{else}}
-                            <form  method="post" action="/leaderboards/add/join">
-                                <input type="hidden" name="_id" value="{{_id}}">
-                                <button class="btn-flat waves-effect waves-light right" type="submit" name="action">Join</button>
-                            </form>
-                        {{/if}}
+                    <li class="collection-item">
+                        <div>
+                            <div class="center-vertically space-between">
+                                <div class="center-vertically">
+                                    {{#if password}}
+                                        <i class="material-icons">lock_outline</i>
+                                    {{else}}
+                                        <i class="material-icons">lock_open</i>
+                                    {{/if}}
+                                    <div style="padding-left: 5px;">
+                                        <span class="left">{{name}}</span> <br>
+                                        <p class="small-text grey-text left">Admin: 
+                                            {{#each users}}
+                                                {{user.displayName}} 
+                                            {{/each}}
+                                        </p>
+                                    </div>
+                                </div>
+                                <form  method="post" action="/leaderboards/add/join">
+                                    <input type="hidden" name="_id" value="{{_id}}">
+                                    {{#if alreadyJoined}}
+                                        <button class="btn-flat disabled right" type="submit" name="action">Joined</button>
+                                    {{else}}
+                                        <button class="btn-flat waves-effect waves-light right" type="submit" name="action">Join</button>
+                                    {{/if}}
+                                </form>
+                            </div>
                         </div>
                     </li>
                 {{/each}}

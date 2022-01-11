@@ -11,7 +11,7 @@ const { updateSubmissions } = require('../logic/submissions')
 // @route   GET /leaderboards
 router.get('/', ensureAuth, hasLeetcodeUsername, async (req, res) => {
     const userLeaderboards = req.user.leaderboards
-
+    
     try {
         let leaderboards = await Leaderboard.find({
             '_id': { $in: userLeaderboards }
@@ -208,10 +208,9 @@ router.post('/refreshSubmissions', ensureAuth, async (req, res) => {
     }
 })
 
-// @desc    Question history
+// @desc    Question history / Join a leaderboard by shortId
 // @route   GET /leaderboards/:shortId
 router.get('/:shortId', ensureAuth, async (req, res) => {
-    // TODO: question history
     const leaderboard = await Leaderboard.findOne({ 
         shortId: req.params.shortId 
     }).populate({ 
