@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'development') {
 // Handlebars
 const exphbs = require('express-handlebars')
 const moment = require('moment')
-app.engine(
+const Handlebars = app.engine(
     '.hbs', 
     exphbs.engine({
         extname: '.hbs',
@@ -40,6 +40,18 @@ app.engine(
             },
             willTrim: function(text, cutoff) {
                 return text.length > cutoff
+            },
+            localTime: function(dateTime) {
+                return moment(dateTime).local().format('hh:mm A ddd MM/DD')
+            },
+            difficultyColor: function(difficulty) {
+                if (difficulty == 'Easy') {
+                    return 'green'
+                } else if (difficulty == 'Medium') {
+                    return 'orange'
+                } else {
+                    return 'red'
+                }
             }
         }
     })

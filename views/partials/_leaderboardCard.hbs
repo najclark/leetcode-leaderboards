@@ -8,17 +8,9 @@
             {{/if}}
             <span class="right" style="margin: 0;">
                 {{#if currentQuestion}}
-                    {{#ifEquals currentQuestion.question.difficulty "Easy"}}
-                        <a class="btn-flat waves-effect waves-light tooltipped right green-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
-                    {{/ifEquals}}
-                    {{#ifEquals currentQuestion.question.difficulty "Medium"}}
-                        <a class="btn-flat waves-effect waves-light tooltipped right orange-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
-                    {{/ifEquals}}
-                    {{#ifEquals currentQuestion.question.difficulty "Hard"}}
-                        <a class="btn-flat waves-effect waves-light tooltipped right red-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
-                    {{/ifEquals}}
+                    <a class="btn-flat waves-effect waves-light tooltipped right {{difficultyColor currentQuestion.question.difficulty}}-text" target="_blank" href="{{currentQuestion.question.url}}" data-position="bottom" data-tooltip="Go to '{{currentQuestion.question.title}}' on leetcode!" style="text-decoration: underline; padding: 0;">{{trim currentQuestion.question.title 20}}</a>
                     <br>
-                    <p class="small-text grey-text right">Expires {{timeTill currentQuestion.expiration}}</p>
+                    <p class="small-text grey-text tooltipped right" data-position="bottom" data-tooltip="{{localTime currentQuestion.expiration}}">Expires {{timeTill currentQuestion.expiration}}</p>
                 {{else}}
                     <form method="post" action="/leaderboards/findquestion">
                         <input type="hidden" name="_id" value="{{_id}}">
@@ -41,7 +33,7 @@
                         <th>
                             <div class="center-vertically">
                                 Status
-                                <i class="material-icons tiny tooltipped" style="padding-left: 5px;" data-position="top" data-tooltip="If you've already completed a problem, resubmit it on leetcode to receive credit.">info_outline</i>
+                                <i class="material-icons tiny tooltipped" style="padding-left: 5px;" data-position="top" data-tooltip="If you've already completed a problem, resubmit it on leetcode to receive credit">info_outline</i>
                             </div>
                         </th>
                     </tr>

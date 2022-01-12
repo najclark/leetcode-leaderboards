@@ -13,12 +13,12 @@
     <div class="row">
         <form  method="post" class="col s12" action="/leaderboards/add/create">
                 <div class="input-field col s12">
-                    <input id="icon_prefix" type="text" class="validate" name="name">
-                    <label for="icon_prefix">Leaderboard Name</label>
+                    <input id="name" type="text" class="validate" name="name">
+                    <label for="name">Leaderboard Name</label>
                 </div>
                 <div class="input-field col s12">
-                    <input id="icon_prefix" type="password" class="validate" name="password">
-                    <label for="icon_prefix">Password (optional)</label>
+                    <input id="password" type="password" class="validate" name="password">
+                    <label for="password">Password (optional)</label>
                 </div>
                 <div class="input-field col s12">
                     <select multiple name="questionDifficulties">
@@ -29,15 +29,21 @@
                     </select>
                     <label>Question Difficulties</label>
                 </div>
-
-                <div class="input-field col s12">
-                    <select name="questionFrequency">
-                        <option value="" disabled selected>Choose your option</option>
-                        <option value="Every 12 Hours">Every 12 Hours</option>
-                        <option value="Daily">Daily</option>
-                        <option value="Weekly">Weekly</option>
-                    </select>
-                    <label>Question Frequency</label>
+                <div class="center-vertically col center-horizontally">
+                    <div class="input-field">
+                        <input id="numQuestions" type="number" class="validate" name="numQuestions">
+                        <label for="numQuestions">Number of Questions</label>
+                    </div>
+                    <p class="small-text" style="padding: 20px;">per</p>
+                    <div class="input-field">
+                        <select name="timePeriod">
+                            <option value="days">Day</option>
+                            <option value="weeks">Week</option>
+                            <option value="months">Month</option>
+                        </select>
+                        <label>Time Period</label>
+                    </div>
+                    <i class="material-icons tiny tooltipped" style="padding-left: 5px;" data-position="top" data-tooltip="Specify how often the leaderboard should get a new question (i.e. 1/day, 2/day, 3/week, etc.)">info_outline</i>
                 </div>
             <div class="row s12">
                 <a class="waves-effect waves-teal btn-flat" href="/leaderboards">Cancel</a>
@@ -53,18 +59,22 @@
         <p class="lead">Search for a leaderboard by name to join leaderboard</p>
     </div>
     <div class="row">
-        <form  method="post" class="col s12" action="/leaderboards/add/search">
+        <form  method="get" class="col s12" action="/leaderboards/add">
             <div class="input-field col s12">
-                <input id="icon_prefix" type="text" class="validate" name="name">
+                {{#if search}}
+                    <input id="icon_prefix" type="text" class="validate active" name="search" value="{{search}}">
+                {{else}}
+                    <input id="icon_prefix" type="text" class="validate" name="search">
+                {{/if}}
                 <label for="icon_prefix">Leaderboard Name</label>
             </div>
             <div class="row s12">
                 <a class="waves-effect waves-teal btn-flat left" href="/leaderboards">Cancel</a>
-                <button class="btn waves-effect waves-light right" type="submit" name="action">Search</button>
+                <button class="btn waves-effect waves-light right" type="submit">Search</button>
             </div>
         </form>
         {{#if results}}
-            <ul class="collection">
+            <ul class="collection" style="max-height: 500px; overflow-y: auto;">
                 {{#each results}}
                     <li class="collection-item">
                         <div>
@@ -72,8 +82,21 @@
                                 <div class="center-vertically">
                                     {{#if password}}
                                         <i class="material-icons">lock_outline</i>
-                                    {{else}}
-                                        <i class="material-icons">lock_open</i>
+                                        <!-- Create password modal structure -->
+                                        <div id="password-modal-{{shortId}}" class="modal">
+                                            <div class="modal-content">
+                                                <h4>{{trim name 20}} requires a password to join</h4>
+                                                <form  method="post" action="/leaderboards/add/join">
+                                                    <input id="password" type="password" class="validate" name="password">
+                                                    <label for="password">Password</label>
+                                                    <input type="hidden" name="_id" value="{{_id}}">
+                                                    <input type="hidden" name="search" value="{{../search}}">
+                                                    <input type="hidden" name="failureRedirect" value="/leaderboards/add">
+                                                    <input type="hidden" name="successRedirect" value="/leaderboards">
+                                                    <button class="btn-flat waves-effect waves-light modal-close right" type="submit" name="action">Submit</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     {{/if}}
                                     <div style="padding-left: 5px;">
                                         <span class="left">{{name}}</span> <br>
@@ -84,12 +107,17 @@
                                         </p>
                                     </div>
                                 </div>
+                                
                                 <form  method="post" action="/leaderboards/add/join">
                                     <input type="hidden" name="_id" value="{{_id}}">
                                     {{#if alreadyJoined}}
                                         <button class="btn-flat disabled right" type="submit" name="action">Joined</button>
                                     {{else}}
-                                        <button class="btn-flat waves-effect waves-light right" type="submit" name="action">Join</button>
+                                        {{#if password}}
+                                            <a class="btn-flat waves-effect waves-light modal-trigger right" href="#password-modal-{{shortId}}">Join</a>
+                                        {{else}}
+                                            <button class="btn-flat waves-effect waves-light right" type="submit" name="action">Join</button>
+                                        {{/if}}
                                     {{/if}}
                                 </form>
                             </div>
@@ -107,6 +135,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('select');
         var instances = M.FormSelect.init(elems, null);
+
+
+        {{#if wrongPassword}}
+            M.toast({html: 'Wrong password'})
+        {{/if}}
+
+        M.AutoInit();
     });
 
   $(document).ready(function(){

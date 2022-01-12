@@ -44,8 +44,15 @@ const LeaderboardSchema = new Schema({
         enum: Difficulty
     }],
     questionFrequency: {
-        type: String,
-        enum: ['Every 12 Hours', 'Daily', 'Weekly']
+        numQuestions: {
+            type: Number,
+            default: 1
+        },
+        timePeriod: {
+            type: String,
+            enum: ['days', 'weeks', 'months'],
+            default: 'days'
+        }
     },
     users: [{
         user: {

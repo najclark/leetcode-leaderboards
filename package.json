@@ -33,6 +33,7 @@
     "mongoose": "^6.1.4",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.30",
+    "node-schedule": "^2.1.0",
     "passport": "^0.5.2",
     "passport-google-oauth20": "^2.0.0"
   },

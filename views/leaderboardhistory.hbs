@@ -1,26 +1,31 @@
 <div class="row" style="padding-top: 2%;">
     <div class="row">
+        <div class="center-vertically space-between">
+            <h4>{{leaderboard.name}}</h4>
+            {{#if alreadyJoined}}
+            {{else}}
+                <form  method="post" action="/leaderboards/add/join">
+                    <input type="hidden" name="_id" value="{{leaderboard._id}}">
+                    <input type="hidden" name="failureRedirect" value="/leaderboards/{{leaderboard.shortId}}">
+                    <input type="hidden" name="successRedirect" value="/leaderboards/{{leaderboard.shortId}}">
+
+                    {{#if leaderboard.password}}
+                        <a class="btn-large waves-effect waves-light modal-trigger right" href="#password-modal">Join</a>
+                    {{else}}
+                        <button class="btn-large waves-effect waves-light right" type="submit" name="action">Join</button>
+                    {{/if}}
+                </form>
+            {{/if}}
+        </div>
         <ul class="collapsible">
             {{#if leaderboard.currentQuestion.question}}
                 <li>
                     <div class="collapsible-header center-vertically space-between" style="width: 100%;">
                         <div class="center-vertically">
                             <i class="material-icons">expand_more</i>
-                            {{#ifEquals leaderboard.currentQuestion.question.difficulty "Easy"}}     
-                                <a class="btn-flat waves-effect waves-light green-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
-                                    {{leaderboard.currentQuestion.question.title}}
-                                </a> 
-                            {{/ifEquals}}
-                            {{#ifEquals leaderboard.currentQuestion.question.difficulty "Medium"}}
-                                <a class="btn-flat waves-effect waves-light orange-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
-                                    {{leaderboard.currentQuestion.question.title}}
-                                </a> 
-                            {{/ifEquals}}
-                            {{#ifEquals leaderboard.currentQuestion.question.difficulty "Hard"}}
-                                <a class="btn-flat waves-effect waves-light red-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
-                                    {{leaderboard.currentQuestion.question.title}}
-                                </a> 
-                            {{/ifEquals}}
+                            <a class="btn-flat waves-effect waves-light {{difficultyColor leaderboard.currentQuestion.question.difficulty}}-text" target="_blank" href="{{leaderboard.currentQuestion.question.url}}" style="text-decoration: underline; padding: 0;">
+                                {{leaderboard.currentQuestion.question.title}}
+                            </a> 
                         </div>
                         <p class="grey-text right" style="margin-left: auto;">Expires {{timeTill leaderboard.currentQuestion.expiration}}</p>
                     </div>
@@ -35,22 +40,10 @@
                 <li>
                     <div class="collapsible-header center-vertically space-between" style="width: 100%;">
                         <div class="center-vertically">
-                            <i class="material-icons">expand_more</i>
-                            {{#ifEquals question.difficulty "Easy"}}     
-                                <a class="btn-flat waves-effect waves-light green-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
-                                    {{question.title}}
-                                </a> 
-                            {{/ifEquals}}
-                            {{#ifEquals question.difficulty "Medium"}}     
-                                <a class="btn-flat waves-effect waves-light orange-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
-                                    {{question.title}}
-                                </a> 
-                            {{/ifEquals}}
-                            {{#ifEquals question.difficulty "Hard"}}     
-                                <a class="btn-flat waves-effect waves-light red-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
-                                    {{question.title}}
-                                </a> 
-                            {{/ifEquals}}
+                            <i class="material-icons">expand_more</i>   
+                            <a class="btn-flat waves-effect waves-light {{difficultyColor question.difficulty}}-text" target="_blank" href="{{question.url}}" style="text-decoration: underline; padding: 0;">
+                                {{question.title}}
+                            </a> 
                         </div>
                         <p class="grey-text right" style="margin-left: auto;">Expired {{timeTill expiration}}</p>
                     </div>
@@ -70,7 +63,6 @@
                                         <th>
                                             <div class="center-vertically">
                                                 Status
-                                                <i class="material-icons tiny tooltipped" style="padding-left: 5px;" data-position="top" data-tooltip="If you've already completed a problem, resubmit it on leetcode to receive credit.">info_outline</i>
                                             </div>
                                         </th>
                                     </tr>
@@ -103,10 +95,32 @@
     </div>
 </div>
 
+
+<!-- Create password modal structure -->
+<div id="password-modal" class="modal">
+    <div class="modal-content">
+        <h4>{{trim leaderboard.name 20}} requires a password to join</h4>
+        <form  method="post" action="/leaderboards/add/join">
+            <input id="password" type="password" class="validate" name="password">
+            <label for="password">Password</label>
+            <input type="hidden" name="_id" value="{{leaderboard._id}}">
+            <input type="hidden" name="failureRedirect" value="/leaderboards/{{leaderboard.shortId}}">
+            <input type="hidden" name="successRedirect" value="/leaderboards/{{leaderboard.shortId}}">
+            <button class="btn-flat waves-effect waves-light modal-close right" type="submit" name="action">Submit</button>
+        </form>
+    </div>
+</div>
+
 <script>
 
     document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.collapsible');
         var instances = M.Collapsible.init(elems, null);
+
+        {{#if wrongPassword}}
+            M.toast({html: 'Wrong password'})
+        {{/if}}
+
+        M.AutoInit();
     });
 </script>

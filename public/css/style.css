@@ -55,6 +55,12 @@ p {
     align-items: center;
 }
 
+.center-horizontally {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
 .incognito-btn {
     padding-right: 2px;
     padding-left: 2px;

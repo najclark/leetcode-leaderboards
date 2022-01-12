@@ -9,9 +9,9 @@ The goal of this project is to create a platform to allow friends to work on the
 - - [x] Be able to logout 
 - [x] Be able to create a leaderboard
 - - [x] Password protection for leaderboards
-- - [ ] Be able to define \# of questions per time period (i.e. 3 questions per week, 1 question per day)
+- - [x] Be able to define \# of questions per time period (i.e. 3 questions per week, 1 question per day)
 - [x] Be able to join an existing leaderboard
-- - [ ] Require appropriate password to join password protected leaderboards
+- - [x] Require appropriate password to join password protected leaderboards
 - [x] Display your leaderboards in a card layout
 - [ ] Display your leaderboards in a list layout
 - [x] Contest Logic
@@ -25,15 +25,15 @@ The goal of this project is to create a platform to allow friends to work on the
 - [x] Question history for each leaderboard
 - - [x] Display question content
 - - [x] Display status of user submissions 
+- - [x] Add join link to page if user isn't registered for leaderboard
 - [ ] User settings
-- - [ ] Be able to change leetcode username
+- - [x] Be able to change leetcode username
  - - [ ] Leetcode username verification
 - - [ ] Be able to toggle between leaderboard card and list layouts
 - [x] Be able to leave a leaderboard
-- - [ ] Are you sure you want to leave confirmation
-- - [ ] Logic to handle assigning a new admin when an admin leaves
-- [ ] Display order of submissions in order of points (with current user first)
-- [ ] Add hover on question expiration to display in local time
+- [x] Display order of submissions in order of points (with current user first)
+- [x] Add hover on question expiration to display in local time
+- [ ] Update points when a contest is over
 
 ## Goals for Release 1.1 🔮
 - [ ] Topic tags integration
@@ -43,3 +43,7 @@ The goal of this project is to create a platform to allow friends to work on the
 - - [ ] Be able to specify topic tags when creating a leaderboard
 - [ ] Allow admin to be able to edit leaderboard features
 - [ ] Allow users to star leaderboards (changing the order they appear on the leaderboards screan)
+- [ ] Allow users to share a leaderboard (copying link to question history page)
+- [ ] Leaving a leaderboard enhanced behavior
+- - [ ] Logic to handle assigning a new admin when an admin leaves
+- - [ ] Are you sure you want to leave confirmation

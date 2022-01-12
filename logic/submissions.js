@@ -4,6 +4,8 @@ const moment = require('moment')
 
 const updateSubmissions = async (leaderboard) => {
     try {
+        // Skip if there is no current question
+        if (!leaderboard.currentQuestion) return;
         // Update the users submissions statuses
         await Promise.all(leaderboard.users.map(async (userData) => {
             // Get a users recent submissions
@@ -39,7 +41,7 @@ const updateSubmissions = async (leaderboard) => {
         }))
         
         leaderboard.submissionStatusLastUpdated = moment().toDate()
-        leaderboard.save()
+        leaderboard.save({ validateBeforeSave: false })
     } catch (err) {
         console.error(err)
     }

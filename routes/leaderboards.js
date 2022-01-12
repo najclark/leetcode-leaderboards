@@ -7,6 +7,8 @@ const Leaderboard = require('../models/Leaderboard')
 const { nextContest } = require('../logic/contest')
 const { updateSubmissions } = require('../logic/submissions')
 
+router.use('/add', require('./add'))
+
 // @desc    leaderboards page
 // @route   GET /leaderboards
 router.get('/', ensureAuth, hasLeetcodeUsername, async (req, res) => {
@@ -16,17 +18,21 @@ router.get('/', ensureAuth, hasLeetcodeUsername, async (req, res) => {
         let leaderboards = await Leaderboard.find({
             '_id': { $in: userLeaderboards }
         }).populate({ 
-            path: 'users',
-            populate: {
-              path: 'user',
-              model: 'User'
-            } 
+            path: 'users.user',
+            model: 'User'
         }).lean()
 
+        // Sort by points and put current user first
         leaderboards = leaderboards.map((leaderboard) => {
-            leaderboard.findQuestion = () => {
-                console.log(`Find a question for leaderboard ${leaderboard.name}`)
-            }
+            leaderboard.users.sort((a, b) => {
+                if (a.user._id.equals(req.user._id)) {
+                    return -1
+                } else if (b.user._id.equals(req.user._id)) {
+                    return 1
+                } else {
+                    return b.points - a.points
+                }
+            })
             return leaderboard
         })
 
@@ -36,104 +42,6 @@ router.get('/', ensureAuth, hasLeetcodeUsername, async (req, res) => {
         })
     } catch (err) {
         console.error(err)
-        res.sendStatus(500)
-    }
-})
-
-// @desc    Form asking creating a leaderboard
-// @route   GET /leaderboards/add
-router.get('/add', ensureAuth, (req, res) => {
-    res.render('leaderboardform', {
-        layout: 'login'
-    })
-})
-
-// @desc    Form asking creating a leaderboard submitted
-// @route   POST /leaderboards/add/create
-router.post('/add/create', ensureAuth, async (req, res) => {
-    req.body.users = [{
-        user: req.user._id,
-        admin: true
-    }]
-    let leaderboard = await Leaderboard.create(req.body)
-
-    const user = await User.findById(req.user._id)
-    user.leaderboards.push(leaderboard._id)
-    user.save()
-
-    leaderboard = await Leaderboard.findById(leaderboard._id).populate({ 
-        path: 'users',
-        populate: {
-          path: 'user',
-          model: 'User'
-        } 
-    })
-    await nextContest(leaderboard, null, false)
-
-    res.redirect('/leaderboards')
-})
-
-// @desc    Searches for leaderboards with a given name
-// @route   POST /leaderboards/add/search
-router.post('/add/search', ensureAuth, async (req, res) => {
-    try {
-        const leaderboards = await Leaderboard.find({
-            name: { $regex : new RegExp(req.body.name, "i") }
-        }).populate({ 
-            path: 'users',
-            populate: {
-              path: 'user',
-              model: 'User'
-            } 
-        }).lean()
-
-        const results = leaderboards.map((leaderboard) => {
-            let alreadyJoined = false
-            const users = leaderboard.users
-            const admins = users.filter((userDetails) => {
-                if (userDetails.user.id === req.user.id) {
-                    alreadyJoined = true
-                }
-                return userDetails.admin
-            })
-            leaderboard.users = admins
-            leaderboard.alreadyJoined = alreadyJoined
-            return leaderboard
-        })
-
-        res.render('leaderboardform', {
-            layout: 'login',
-            results,
-            user: req.user
-        })
-    } catch(err) {
-        console.error(err)
-        res.sendStatus(500)
-    }
-})
-
-// @desc    Joining an existing leaderboard
-// @route   POST /leaderboards/add/join
-router.post('/add/join', ensureAuth, async (req, res) => {
-    // TODO: add password protection logic
-    try {
-        const leaderboard = await Leaderboard.findById(req.body._id)
-        leaderboard.users.push({
-            user: req.user._id,
-            admin: false,
-            submission: {
-                status: 'No Submission'
-            }
-        })
-        leaderboard.save()
-    
-        const user = await User.findById(req.user._id)
-        user.leaderboards.push(leaderboard._id)
-        user.save()
-    
-        res.redirect('/leaderboards')
-    } catch (err) {
-        console.log(err)
         res.sendStatus(500)
     }
 })
@@ -227,9 +135,20 @@ router.get('/:shortId', ensureAuth, async (req, res) => {
     // Reverse questionHistory to have most recent question first
     leaderboard.questionHistory.reverse()
 
+    alreadyJoined = false
+    leaderboard.users.every((userData) => {
+        if (userData.user._id.equals(req.user._id)) {
+            alreadyJoined = true
+            return false // stop iterating
+        }
+        return true
+    })
+
     res.render('leaderboardhistory', {
         leaderboard,
-        user: req.user
+        user: req.user,
+        alreadyJoined,
+        wrongPassword: req.query.wrongPassword
     })
 })
 

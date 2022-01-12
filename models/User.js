@@ -12,6 +12,11 @@ const UserSchema = new Schema({
         type: [String],
         default: []
     },
+    preferredLayout: {
+        type: String,
+        enum: ['card', 'list'],
+        default: 'card'
+    },
     createdAt: {
         type: Date,
         default: Date.now

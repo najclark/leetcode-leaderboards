@@ -43,26 +43,17 @@ const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
         }
         question.url = `https://leetcode.com${question.questionDetailUrl}`
         
-        let expiration = null
-        switch (leaderboard.questionFrequency) {
-            case 'Every 12 Hours':
-                expiration = new moment().add(12, 'hours').toDate()
-                break;
-            case 'Daily':
-                expiration = new moment().add(1, 'days').toDate()
-                break;
-            case 'Weekly':
-                expiration = new moment().add(1, 'weeks').toDate()
-                break;
-        }
+        const future = moment().add(1, leaderboard.questionFrequency.timePeriod)
+        const msDiff = Math.abs(moment().diff(future))
+        const expiration = msDiff / leaderboard.questionFrequency.numQuestions
 
         leaderboard.currentQuestion = {
             question,
-            expiration
+            expiration: moment().add(expiration, 'ms').toDate()
         }
-        leaderboard.save()
+        leaderboard.save({ validateBeforeSave: false })
 
-        return expiration
+        return moment().add(expiration, 'ms').toDate()
     } catch (err) {
         console.error(err)
         return null
