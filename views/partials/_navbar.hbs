@@ -1,19 +1,13 @@
 <ul id="dropdown1" class="dropdown-content">
     <li><a href="/leetcodeform">Update Leetcode Username</a></li>
-    {{#ifEquals user.preferredLayout 'card'}}
-        <li><a href="/settings">List Layout</a></li>
-    {{/ifEquals}}
-    {{#ifEquals user.preferredLayout 'list'}}
-        <li><a href="/settings">Card Layout</a></li>
-    {{/ifEquals}}
     <li class="divider"></li>
     <li><a href="/auth/logout">Logout</a></li>
 </ul>
 <nav class="blue">
     <div class="nav-wrapper" style="width:80%; margin: 0 auto;">
         <a href="/" class="brand-logo">🏆 Leetcode Leaderboards</a>
+
         <ul class="right hide-on-med-and-down">
-            <!-- Dropdown Trigger -->
             <li>
                 <a class="dropdown-trigger" href="#!" data-target="dropdown1">
                     <div class="valign-wrapper">

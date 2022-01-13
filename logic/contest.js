@@ -11,12 +11,14 @@ const resumeContest = async (leaderboard, updateJob, saveCurrentQuestion = true)
     }
 
     if (leaderboard.currentQuestion) {
-        await updateSubmissions(leaderboard)
+        const error = await updateSubmissions(leaderboard)
+        if (error) return // Don't setup update jobs if leaderboard no longer exists
 
         // Setup update submissions interval (every 5 minutes)
         const updateJob = schedule.scheduleJob('*/5 * * *', async () =>{
             console.log(`Updating ${leaderboard.name}'s submissions'`)
-            await updateSubmissions(leaderboard)
+            const error = await updateSubmissions(leaderboard)
+            if (error) updateJob.cancel()
         })
 
         // Setup end current question job
@@ -36,16 +38,23 @@ const nextContest = async (leaderboard, updateJob, saveCurrentQuestion = true) =
     }
 
     if (leaderboard.currentQuestion.question) {
-        await updateSubmissions(leaderboard)
+        const error = await updateSubmissions(leaderboard)
+        if (error) {
+            return // Don't setup jobs to update this leaderboard
+        }
     }
     
     const expiration = await nextQuestion(leaderboard, saveCurrentQuestion)
 
-    if (expiration) {
+    if (expiration < -1) {
+        return //Don't setup jobs to update this leaderboard
+    }
+    else if (expiration) {
         // Setup update submissions interval (every 5 minutes)
         const updateJob = schedule.scheduleJob('*/5 * * * *', async () =>{
             console.log(`Updating ${leaderboard.name}'s submissions'`)
-            await updateSubmissions(leaderboard)
+            const error = await updateSubmissions(leaderboard)
+            if (error) updateJob.cancel()
         })
 
         // Setup end current question job

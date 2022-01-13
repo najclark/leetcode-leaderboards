@@ -1,0 +1,23 @@
+<h3>Does this look like you?</h3>
+
+<div class="section">
+    <p class="lead">It's important to attach the correct leetcode username to your account</p>
+</div>
+<div class="row">
+    <form  method="post" class="col s12" action="/leetcodeform/submit">
+        <input type="hidden" name="username" value="{{username}}">
+        <div class="center-vertically space-between" style="width: 100%;">
+            <div class="image-name">
+                <img src="{{result.profile.userAvatar}}" class="circle" style="width:35px;">
+                <div style="margin-left:5px;">
+                    <span class="left">{{result.username}}</span> <br>
+                    <p class="small-text grey-text left">Problems Solved: {{result.totalCompleted}}</p>  
+                </div>
+            </div>
+            <div>
+                <button class="btn-flat waves-effect waves-light green-text" type="submit" style="right: 0;"><i class="large material-icons">check</i></button>
+                <a class="waves-effect waves-light btn-flat red-text" href="/leetcodeform"><i class="large material-icons">close</i></a>
+            </div>
+        </div>
+    </form>
+</div>

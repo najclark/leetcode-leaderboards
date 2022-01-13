@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { ensureAuth, ensureGuest } = require('../middleware/auth')
 const User = require('../models/User')
+const { userDetails } = require('../logic/leetcode')
 
 // @desc    Login/Landing page
 // @route   GET /
@@ -16,6 +17,19 @@ router.get('/', ensureGuest, (req, res) => {
 router.get('/leetcodeform', ensureAuth, (req, res) => {
     res.render('leetcodeform', {
         layout: 'login'
+    })
+})
+
+// @desc    Form verifying leetcode username
+// @route   GET /leetcodeform/verify
+router.post('/leetcodeform/verify', ensureAuth, async (req, res) => {
+    const result = await userDetails(req.body.username)
+    result.totalCompleted = result.submitStats.acSubmissionNum[0].count
+    
+    res.render('leetcodeverify', {
+        layout: 'login',
+        username: req.body.username,
+        result
     })
 })
 

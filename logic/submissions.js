@@ -41,7 +41,13 @@ const updateSubmissions = async (leaderboard) => {
         }))
         
         leaderboard.submissionStatusLastUpdated = moment().toDate()
-        leaderboard.save({ validateBeforeSave: false })
+
+        try {
+            leaderboard.save({ validateBeforeSave: false })
+        } catch (err) {
+            // Leaderboard likely no longer exists
+            return -1
+        }
     } catch (err) {
         console.error(err)
     }

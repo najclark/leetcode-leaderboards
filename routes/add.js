@@ -80,7 +80,7 @@ router.post('/join', ensureAuth, async (req, res) => {
     try {
         const leaderboard = await Leaderboard.findById(req.body._id)
 
-        if (req.body.password !== leaderboard.password) {
+        if (leaderboard.password && req.body.password !== leaderboard.password) {
             res.redirect(`${req.body.failureRedirect}?wrongPassword=true&search=${req.body.search}`)
         } else {
             leaderboard.users.push({

@@ -79,8 +79,41 @@ const recentUserSubmissions = async (leetcodeUsername) => {
     return data.data.data.recentSubmissionList
 }
 
+const userDetails = async (leetcodeUsername) => {
+    const data = await axios.post('https://leetcode.com/graphql', {
+            query: 
+            `query matchedUser($username: String!){ 
+                matchedUser(username: $username) {
+                    username
+                    profile {
+                        userAvatar
+                    }
+                    submitStats: submitStatsGlobal {
+                        acSubmissionNum {
+                            difficulty
+                            count
+                            submissions
+                        }
+                    }
+                }
+            }`,
+            variables: {
+                username: leetcodeUsername
+            }
+        }, 
+        {
+        headers: {
+            'Content-Type': 'application/json'
+          }
+    })
+    
+    return data.data.data.matchedUser
+}
+
+
 module.exports = {
     randomQuestion,
     currentTimestamp,
-    recentUserSubmissions
+    recentUserSubmissions,
+    userDetails
 }

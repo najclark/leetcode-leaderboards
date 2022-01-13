@@ -1,10 +1,30 @@
 const moment = require('moment')
 const { randomQuestion } = require('./leetcode')
 
+const questionWorth = (difficulty) => {
+    switch (difficulty) {
+        case 'Medium':
+            return 20
+        case 'Hard':
+            return 30
+        default:
+            return 10;
+    }
+}
+
 const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
     try {
         // Save the current question in the question history
         if (leaderboard.currentQuestion && saveCurrentQuestion) {
+            // Award points
+            const pointsForGrab = questionWorth(leaderboard.currentQuestion.difficulty)
+            leaderboard.users.map((userData) => {
+                if (userData.submission.status == 'Accepted') {
+                    userData.points += pointsForGrab
+                }
+                return userData
+            })
+            // Save user snapshot
             leaderboard.questionHistory.push({
                 question: leaderboard.currentQuestion.question,
                 expiration: leaderboard.currentQuestion.expiration,
@@ -51,7 +71,13 @@ const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
             question,
             expiration: moment().add(expiration, 'ms').toDate()
         }
-        leaderboard.save({ validateBeforeSave: false })
+
+        try {
+            leaderboard.save({ validateBeforeSave: false })
+        } catch (err) {
+            // Leaderboard likely no longer exists
+            return -1
+        }
 
         return moment().add(expiration, 'ms').toDate()
     } catch (err) {
