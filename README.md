@@ -32,8 +32,8 @@ The goal of this project is to create a platform to allow friends to work on the
 - [x] Display order of submissions in order of points (with current user first)
 - [x] Add hover on question expiration to display in local time
 - [x] Update points when a contest is over
-- [ ] Data validation
-- [ ] Delete update jobs when leaderboard is deleted
+- [x] Data validation
+- [x] Delete update jobs when leaderboard is deleted
 
 ## Goals for Release 1.1 🔮
 - [ ] Topic tags integration

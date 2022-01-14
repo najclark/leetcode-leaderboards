@@ -15,8 +15,12 @@ router.get('/', ensureGuest, (req, res) => {
 // @desc    Form asking for leetcode username
 // @route   GET /leetcodeform
 router.get('/leetcodeform', ensureAuth, (req, res) => {
+    const usernameError = req.session.usernameError
+    delete req.session.usernameError
+
     res.render('leetcodeform', {
-        layout: 'login'
+        layout: 'login',
+        usernameError
     })
 })
 
@@ -24,13 +28,19 @@ router.get('/leetcodeform', ensureAuth, (req, res) => {
 // @route   GET /leetcodeform/verify
 router.post('/leetcodeform/verify', ensureAuth, async (req, res) => {
     const result = await userDetails(req.body.username)
-    result.totalCompleted = result.submitStats.acSubmissionNum[0].count
     
-    res.render('leetcodeverify', {
-        layout: 'login',
-        username: req.body.username,
-        result
-    })
+    if (!result) {
+        // There was a problem with the username
+        req.session.usernameError = true
+        res.redirect('/leetcodeform')
+    } else {    
+        result.totalCompleted = result.submitStats.acSubmissionNum[0].count
+        res.render('leetcodeverify', {
+            layout: 'login',
+            username: req.body.username,
+            result
+        })
+    }
 })
 
 // @desc    Form asking for leetcode username submitted

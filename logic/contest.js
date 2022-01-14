@@ -16,7 +16,6 @@ const resumeContest = async (leaderboard, updateJob, saveCurrentQuestion = true)
 
         // Setup update submissions interval (every 5 minutes)
         const updateJob = schedule.scheduleJob('*/5 * * *', async () =>{
-            console.log(`Updating ${leaderboard.name}'s submissions'`)
             const error = await updateSubmissions(leaderboard)
             if (error) updateJob.cancel()
         })
@@ -52,7 +51,6 @@ const nextContest = async (leaderboard, updateJob, saveCurrentQuestion = true) =
     else if (expiration) {
         // Setup update submissions interval (every 5 minutes)
         const updateJob = schedule.scheduleJob('*/5 * * * *', async () =>{
-            console.log(`Updating ${leaderboard.name}'s submissions'`)
             const error = await updateSubmissions(leaderboard)
             if (error) updateJob.cancel()
         })

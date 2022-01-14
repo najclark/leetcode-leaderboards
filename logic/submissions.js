@@ -27,9 +27,6 @@ const updateSubmissions = async (leaderboard) => {
                         userData.submission.memory = recentSubmission.memory
                         userData.submission.lang = recentSubmission.lang
                         userData.submission.time = moment().toDate()
-                        // userData.user.points += 10
-                        // TODO: handle adding points bc it is not trivial avoid readding points already allotted,
-                        //       maybe update points when contest is over to simplify things
                     }
 
                     return false // return false to prevent iterating further through recentSubmissions
@@ -43,7 +40,7 @@ const updateSubmissions = async (leaderboard) => {
         leaderboard.submissionStatusLastUpdated = moment().toDate()
 
         try {
-            leaderboard.save({ validateBeforeSave: false })
+            await leaderboard.save({ validateBeforeSave: false })
         } catch (err) {
             // Leaderboard likely no longer exists
             return -1

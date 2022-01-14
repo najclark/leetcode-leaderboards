@@ -50,16 +50,20 @@ const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
         })
 
         let question = null
+        let tries = 0
         while (!question) {
             // Pick random difficulty
             const difficulty = leaderboard.questionDifficulties[Math.floor(Math.random()*leaderboard.questionDifficulties.length)]
 
-            const potentialQuestion = await randomQuestion(difficulty)
-            if (!potentialQuestion.isPaidOnly && 
-                potentialQuestion.categoryTitle === 'Algorithms' &&
-                !oldQuestions.includes(potentialQuestion.titleSlug)) {
-                    question = potentialQuestion
+            const potential = await randomQuestion(difficulty)
+            if (!potential.isPaidOnly && potential.categoryTitle === 'Algorithms') {
+                // Accept the question if it hasn't been done before or we've spent 
+                // a while looking for a question
+                if (!oldQuestions.includes(potential.titleSlug) || tries > 50) {
+                    question = potential
+                }
             }
+            tries++
         }
         question.url = `https://leetcode.com${question.questionDetailUrl}`
         
@@ -73,7 +77,7 @@ const nextQuestion = async (leaderboard, saveCurrentQuestion) => {
         }
 
         try {
-            leaderboard.save({ validateBeforeSave: false })
+            await leaderboard.save({ validateBeforeSave: false })
         } catch (err) {
             // Leaderboard likely no longer exists
             return -1
