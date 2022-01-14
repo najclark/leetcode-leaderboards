@@ -1,4 +1,4 @@
-# 🏆 Leetcode Leaderboards
+# 🏆 [Leetcode Leaderboards](http://leetcode-leaderboards.herokuapp.com/)
 *A Leetcode contest system written in NodeJS and Express.*
 
 The goal of this project is to create a platform to allow friends to work on the same leetcode problems to compete for points. The hope is for users to build up consistent study patterns of algorithmic technical interview questions by leveraging the wealth of questions and code submission platform on leetcode.
